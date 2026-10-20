@@ -1,0 +1,129 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stopwatch & Lap Tracker</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Geist:100,200,300,regular,500,600,700,800,900,100italic,200italic,300italic,italic,500italic,600italic,700italic,800italic,900italic"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="app-container">
+      <div class="dashboard-card">
+        <div class="timer-section">
+          <div class="timer-gauge-ring">
+            <span class="gauge-label minutes">MINUTES</span>
+            <span class="gauge-label seconds">SECONDS</span>
+            <span class="gauge-label millis">1/100 SEC</span>
+          </div>
+
+          <div class="timer-display">
+            <span class="digits">14 : 04</span>
+            <span class="decimal">.</span>
+            <span class="digits millis-digit">30</span>
+          </div>
+
+          <div class="current-lap-pill">
+            <span class="icon-dot"></span>
+            <span>CURRENT LAP 05</span>
+            <span class="lap-time-mini">00:48.12</span>
+          </div>
+
+          <button class="hud-btn btn-start" id="btn-start">
+            <span class="btn-icon">▶</span> START
+            <span class="btn-key">SPACEBAR</span>
+          </button>
+          <button class="hud-btn btn-pause" id="btn-pause">
+            <span class="btn-icon">⏸</span> PAUSE
+            <span class="btn-key">HOLD SPACE</span>
+          </button>
+          <button class="hud-btn btn-lap">
+            <span class="btn-icon">⚑</span> LAP
+            <span class="btn-key">KEY [ L ]</span>
+          </button>
+          <button class="hud-btn btn-reset" id="btn-reset">
+            <span class="btn-icon">↺</span> RESET
+            <span class="btn-key">KEY [ R ]</span>
+          </button>
+        </div>
+
+        <div class="ledger-container">
+          <div class="ledger-header">
+            <div class="ledger-title-group">
+              <span class="ledger-icon">📊</span>
+              <h3>SPLIT TELEMETRY LEDGER</h3>
+              <span class="session-tag">Session Index: #2025-05-CHRONO</span>
+            </div>
+            <div class="ledger-actions">
+              <button class="mini-btn">↓ EXPORT CSV</button>
+              <button class="mini-btn">🗑 CLEAR LAPS</button>
+            </div>
+          </div>
+
+          <div class="telemetry-table">
+            <div class="table-row header-row">
+              <div class="col-lap">LAP #</div>
+              <div class="col-split">SPLIT / LAP TIME</div>
+              <div class="col-total">TOTAL ELAPSED</div>
+              <div class="col-status">STATUS / DELTA</div>
+            </div>
+
+            <div class="table-row row-current">
+              <div class="col-lap">• 05</div>
+              <div class="col-split">00:48.12</div>
+              <div class="col-total">04:28.65</div>
+              <div class="col-status">
+                <span class="badge current">CURRENT</span>
+              </div>
+            </div>
+
+            <div class="table-row row-fastest">
+              <div class="col-lap">04</div>
+              <div class="col-split">00:42.30 ⚡</div>
+              <div class="col-total">03:40.53</div>
+              <div class="col-status">
+                <span class="badge fastest">FASTEST</span>
+              </div>
+            </div>
+
+            <!-- Row: Slowest Lap (03) -->
+            <div class="table-row row-slowest">
+              <div class="col-lap">03</div>
+              <div class="col-split">00:54.88</div>
+              <div class="col-total">02:58.23</div>
+              <div class="col-status">
+                <span class="badge slowest">SLOWEST</span>
+              </div>
+            </div>
+
+            <!-- Standard Rows (02, 01) -->
+            <div class="table-row">
+              <div class="col-lap">02</div>
+              <div class="col-split">00:46.15</div>
+              <div class="col-total">02:03.35</div>
+              <div class="col-status">+3.85s</div>
+            </div>
+            <div class="table-row">
+              <div class="col-lap">01</div>
+              <div class="col-init">01:17.20</div>
+              <div class="col-total">01:17.20</div>
+              <div class="col-status">INIT</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="script.js"></script>
+    <script>
+      const startBtn = document.getElementById("btn-start");
+      const pauseBtn = document.getElementById("btn-pause");
+      const resetBtn = document.getElementById("btn-reset");
+
+      startBtn.addEventListener("click", startStopwatch);
+      pauseBtn.addEventListener("click", pauseStopwatch);
+      resetBtn.addEventListener("click", resetStopwatch);
+    </script>
+  </body>
+</html>

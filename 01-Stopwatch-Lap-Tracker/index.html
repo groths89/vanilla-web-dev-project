@@ -115,17 +115,19 @@
         </div>
       </div>
     </div>
-    <script src="script.js"></script>
+    <script src="./script.js" defer></script>
     <script>
-      const startBtn = document.getElementById("btn-start");
-      const pauseBtn = document.getElementById("btn-pause");
-      const resetBtn = document.getElementById("btn-reset");
-      const recordBtn = document.getElementById("btn-record");
+      document.addEventListener("DOMContentLoaded", () => {
+        const startBtn = document.getElementById("btn-start");
+        const pauseBtn = document.getElementById("btn-pause");
+        const resetBtn = document.getElementById("btn-reset");
+        const recordBtn = document.getElementById("btn-record");
 
-      startBtn.addEventListener("click", startStopwatch);
-      pauseBtn.addEventListener("click", pauseStopwatch);
-      resetBtn.addEventListener("click", resetStopwatch);
-      recordBtn.addEventListener("click", recordLap);
+        startBtn.addEventListener("click", startStopwatch);
+        pauseBtn.addEventListener("click", pauseStopwatch);
+        resetBtn.addEventListener("click", resetStopwatch);
+        recordBtn.addEventListener("click", recordLap);
+      });
     </script>
   </body>
 </html>

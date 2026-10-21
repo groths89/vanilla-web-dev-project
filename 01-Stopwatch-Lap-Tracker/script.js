@@ -4,10 +4,10 @@ let elapsedTime = 0;
 let lapList = [];
 let timerInterval = null;
 
-function updateDOMDisplay(formattedTimeString: String) {
-    let parts = formattedTimeString.split(".");
-    let mainTime = parts[0];
-    let milliTime = parts[1];
+function updateDOMDisplay(formattedTimeString) {
+    let parts = formattedTimeString?.split(".");
+    let mainTime = parts?.[0];
+    let milliTime = parts?.[1];
 
     let timeDigitsElements = document.querySelector(".digits");
     let milliDigitsElement = document.querySelector(".millis-digit");
@@ -16,7 +16,7 @@ function updateDOMDisplay(formattedTimeString: String) {
     milliDigitsElement.textContent = milliTime;
 }
 
-function updateCurrentLapPill(currentLapNumber: Number, activeLapTime) {
+function updateCurrentLapPill(currentLapNumber, activeLapTime) {
     let lapNumberLabel = document.querySelectorAll(".current-lap-pill > span").item(1);
     let lapTimeMini = document.querySelector(".lap-time-mini");
 

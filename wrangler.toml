@@ -1,0 +1,13 @@
+name = "vanilla-web-dev-lab"
+main = "src/worker.js"
+compatibility_date = "2026-03-01"
+
+compatibility_flags = [
+  "nodejs_compat",
+  "enable_nodejs_http_modules",
+  "enable_nodejs_http_server_modules"
+]
+
+[assets]
+directory = "."
+binding = "ASSETS"

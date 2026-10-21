@@ -1,0 +1,17 @@
+node_modules
+tests
+.github
+.git
+.wrangler
+playwright-report
+test-results
+src
+views
+server.js
+package.json
+package-lock.json
+wrangler.toml
+vitest.config.js
+playwright.config.js
+.env
+.assetsignore

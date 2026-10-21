@@ -39,7 +39,7 @@
             <span class="btn-icon">⏸</span> PAUSE
             <span class="btn-key">HOLD SPACE</span>
           </button>
-          <button class="hud-btn btn-lap">
+          <button class="hud-btn btn-lap" id="btn-record">
             <span class="btn-icon">⚑</span> LAP
             <span class="btn-key">KEY [ L ]</span>
           </button>
@@ -120,10 +120,12 @@
       const startBtn = document.getElementById("btn-start");
       const pauseBtn = document.getElementById("btn-pause");
       const resetBtn = document.getElementById("btn-reset");
+      const recordBtn = document.getElementById("btn-record");
 
       startBtn.addEventListener("click", startStopwatch);
       pauseBtn.addEventListener("click", pauseStopwatch);
       resetBtn.addEventListener("click", resetStopwatch);
+      recordBtn.addEventListener("click", recordLap);
     </script>
   </body>
 </html>

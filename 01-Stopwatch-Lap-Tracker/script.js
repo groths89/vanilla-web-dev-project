@@ -4,13 +4,15 @@ let elapsedTime = 0;
 let lapList = [];
 let timerInterval = null;
 
+let timeDigitsElements = document.querySelector(".digits");
+let milliDigitsElement = document.querySelector(".millis-digit");
+
+let tableContainer = document.querySelector('.telemetry-table');
+
 function updateDOMDisplay(formattedTimeString) {
     let parts = formattedTimeString?.split(".");
     let mainTime = parts?.[0];
     let milliTime = parts?.[1];
-
-    let timeDigitsElements = document.querySelector(".digits");
-    let milliDigitsElement = document.querySelector(".millis-digit");
 
     timeDigitsElements.textContent = mainTime;
     milliDigitsElement.textContent = milliTime;
@@ -24,6 +26,61 @@ function updateCurrentLapPill(currentLapNumber, activeLapTime) {
     lapTimeMini.textContent = formatTime(activeLapTime);
 }
 
+function renderNewLapToLedger(lapObject, allLaps) {
+    const dynamicRows = tableContainer.querySelectorAll(".table-row:not(.header-row)");
+    dynamicRows.forEach(row => row.remove());
+
+    let splitTimesArray = allLaps.map(lap => lap.splitTime);
+    let minimum = Math.min(...splitTimesArray);
+    let maximum = Math.max(...splitTimesArray);
+
+    allLaps.forEach((lap, index) => {
+        const newRow = document.createElement("div");
+        newRow.classList.add("table-row");
+
+        let statusBadgeHtml = "";
+
+        if (allLaps.length > 1) {
+            if (lap.splitTime === minimum) {
+                newRow.classList.add("row-fastest");
+                statusBadgeHtml = '<span class="badge fastest">FASTEST</span>';
+            } else if (lap.splitTime === maximum) {
+                newRow.classList.add("row-slowest");
+                statusBadgeHtml = '<span class="badge slowest">SLOWEST</span>';
+            }
+        }
+
+        newRow.innerHTML = 
+            '<div class="col-lap">' + lap.lapNumber + '</div>' +
+            '<div class="col-split">' + formatTime(lap.splitTime) + '</div>' +
+            '<div class="col-total">' + formatTime(lap.totalTime) + '</div>' +
+            '<div class="col-status">' + statusBadgeHtml + '</div>';
+
+        tableContainer.firstElementChild.after(newRow);
+    });
+
+    const liveRow = document.createElement("div");
+    liveRow.classList.add("table-row", "row-current");
+    
+    let nextLapNumber = allLaps.length + 1;
+    
+    liveRow.innerHTML = 
+        '<div class="col-lap">• ' + nextLapNumber + '</div>' +
+        '<div class="col-split">00:00.00</div>' +
+        '<div class="col-total">00:00.00</div>' +
+        '<div class="col-status"><span class="badge current">CURRENT</span></div>';
+
+    tableContainer.firstElementChild.after(liveRow);
+}
+
+function resetDOMUI() {
+    timeDigitsElements.textContent = "00:00";
+    milliDigitsElement.textContent = "00";
+
+    const dynamicRows = tableContainer.querySelectorAll(".table-row:not(.header-row)");
+    dynamicRows.forEach(row => row.remove());
+}
+
 function formatTime(totalMilliseconds){
     let minutes = Math.floor(totalMilliseconds / 60000);
     let seconds = Math.floor((totalMilliseconds % 60000) / 1000);
@@ -34,10 +91,26 @@ function formatTime(totalMilliseconds){
 
 function updateTimer(){
     if (isRunning) {
-        let currentElapsedTime = elapsedTime + (performance.now() - startTime);
-        console.log(formatTime(currentElapsedTime));
+        let currentSplitTime;
+        let currentElapsedTime = Math.floor(elapsedTime + (performance.now() - startTime));
 
-        updateDOMDisplay();
+        updateDOMDisplay(formatTime(currentElapsedTime));
+        updateCurrentLapPill(lapList.length + 1, currentElapsedTime);
+
+        if (lapList.length > 0) {
+            let lastIndex = lapList.length - 1;
+            let previousTotalTime = lapList[lastIndex].totalTime;
+            currentSplitTime = currentElapsedTime - previousTotalTime;
+        } else {
+            currentSplitTime = currentElapsedTime;
+        }
+
+        let liveRow = document.querySelector(".table-row.row-current");
+
+        if (liveRow) {
+            liveRow.querySelector(".col-split").textContent = formatTime(currentSplitTime);
+            liveRow.querySelector(".col-total").textContent = formatTime(currentElapsedTime);
+        }
     }
 }
 
@@ -66,7 +139,7 @@ function resetStopwatch() {
     elapsedTime = 0;
     lapList = [];
 
-    updateDOMDisplay();
+    resetDOMUI();
 }
 
 function recordLap() {
@@ -85,13 +158,13 @@ function recordLap() {
 
         const lapObject = {
             lapNumber: lapList.length + 1,
-            splitTime: formatTime(splitTime),
+            splitTime: splitTime,
             totalTime: currentLapTime
         }
 
         lapList.push(lapObject);
         console.log("Recorded Lap:", lapObject);
 
-        //DOM manipulation here
+        renderNewLapToLedger(lapObject, lapList);
     }
 }

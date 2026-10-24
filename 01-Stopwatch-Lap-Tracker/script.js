@@ -40,14 +40,19 @@ function renderNewLapToLedger(lapObject, allLaps) {
 
         let statusBadgeHtml = "";
 
-        if (allLaps.length > 1) {
-            if (lap.splitTime === minimum) {
-                newRow.classList.add("row-fastest");
-                statusBadgeHtml = '<span class="badge fastest">FASTEST</span>';
-            } else if (lap.splitTime === maximum) {
-                newRow.classList.add("row-slowest");
-                statusBadgeHtml = '<span class="badge slowest">SLOWEST</span>';
-            }
+        if (index === 0) {
+            statusBadgeHtml = 'INIT';
+        } else if (lap.splitTime === minimum) {
+            newRow.classList.add("row-fastest");
+            statusBadgeHtml = '<span class="badge fastest">FASTEST</span>';
+        } else if (lap.splitTime === maximum) {
+            newRow.classList.add("row-slowest");
+            statusBadgeHtml = '<span class="badge slowest">SLOWEST</span>';
+        } else {
+            let previousLapSplit = allLaps[index - 1].splitTime;
+            let deltaMs = lap.splitTime - previousLapSplit;
+            let sign = deltaMs >= 0 ? '+' : '';
+            statusBadgeHtml = sign + (deltaMs / 1000).toFixed(2) + 's';
         }
 
         newRow.innerHTML = 
@@ -63,9 +68,10 @@ function renderNewLapToLedger(lapObject, allLaps) {
     liveRow.classList.add("table-row", "row-current");
     
     let nextLapNumber = allLaps.length + 1;
+    let lapDisplayPrefix = '• ';
     
     liveRow.innerHTML = 
-        '<div class="col-lap">• ' + nextLapNumber + '</div>' +
+        '<div class="col-lap">' + lapDisplayPrefix + nextLapNumber + '</div>' +
         '<div class="col-split">00:00.00</div>' +
         '<div class="col-total">00:00.00</div>' +
         '<div class="col-status"><span class="badge current">CURRENT</span></div>';

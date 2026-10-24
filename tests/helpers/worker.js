@@ -5,9 +5,9 @@ export const LOCAL_URL = `http://127.0.0.1:${PORT}`;
 
 // Starts `wrangler dev` and resolves once the worker answers requests.
 export async function startWorker() {
-  const child = spawn('npx', ['wrangler', 'dev', '--port', String(PORT), '--ip', '127.0.0.1'], {
+  const child = spawn('npx', ['wrangler', 'dev', '--local', '--port', String(PORT), '--ip', '127.0.0.1'], {
     shell: true,
-    stdio: 'ignore',
+    stdio: 'inherit',
   });
 
   const deadline = Date.now() + 90_000;

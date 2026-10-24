@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 
-const RAW_BASE_URL = process.env.BASE_URL;
+const RAW_BASE_URL = process.env.SMOKE_BASE_URL;
 
 function parseBaseUrl(value) {
   try {
@@ -17,7 +17,7 @@ const BASE_URL = parseBaseUrl(RAW_BASE_URL);
 it('BASE_URL is configured', () => {
   expect(
     BASE_URL,
-    `BASE_URL must be an absolute http(s) URL (e.g. https://name.account.workers.dev), got: ${JSON.stringify(RAW_BASE_URL)}`
+    `SMOKE_BASE_URL must be an absolute http(s) URL (e.g. https://name.account.workers.dev), got: ${JSON.stringify(RAW_BASE_URL)}`
   ).toBeTruthy();
 });
 

@@ -57,7 +57,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       - run: npm run test:smoke
         env:
-          BASE_URL: ${{ vars.STAGING_URL }}
+          SMOKE_BASE_URL: ${{ vars.STAGING_URL }}
 
   deploy-production:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -75,4 +75,4 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       - run: npm run test:smoke
         env:
-          BASE_URL: ${{ vars.PRODUCTION_URL }}
+          SMOKE_BASE_URL: ${{ vars.PRODUCTION_URL }}

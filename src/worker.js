@@ -5,7 +5,7 @@ const projects = [
         folderName: '01-Stopwatch-Lap-Tracker',
         title: 'Stopwatch Lap Tracker',
         slug: 'stopwatch-lap-tracker',
-        path: '/stopwatch-lap-tracker'
+        path: '/stopwatch-lap-tracker/'
     }
     // As you add more projects, just append them to this array!
 ];
@@ -47,8 +47,11 @@ export default {
 
         for (const project of projects) {
             const prefix = `/${project.slug}`;
-            if (url.pathname === prefix || url.pathname.startsWith(`${prefix}/`)) {
-                const rest = url.pathname.slice(prefix.length) || '/';
+            if (url.pathname === prefix) {
+                return Response.redirect(`${url.origin}${prefix}/${url.search}`, 301);
+            }
+            if (url.pathname.startsWith(`${prefix}/`)) {
+                const rest = url.pathname.slice(prefix.length);
                 const assetUrl = new URL(`/${project.folderName}${rest}`, url);
                 return env.ASSETS.fetch(new Request(assetUrl, request));
             }

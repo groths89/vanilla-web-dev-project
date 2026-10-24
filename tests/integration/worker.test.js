@@ -30,6 +30,12 @@ describe('worker (wrangler dev)', () => {
     }
   });
 
+  it('redirects a project path without a trailing slash so relative assets resolve', async () => {
+    const res = await fetch(`${LOCAL_URL}/stopwatch-lap-tracker`, { redirect: 'manual' });
+    expect(res.status).toBe(301);
+    expect(new URL(res.headers.get('location')).pathname).toBe('/stopwatch-lap-tracker/');
+  });
+
   it('returns 404 for unknown routes', async () => {
     const res = await fetch(`${LOCAL_URL}/does-not-exist`);
     expect(res.status).toBe(404);

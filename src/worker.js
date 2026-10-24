@@ -1,6 +1,11 @@
+import { fileURLToPath } from 'node:url';
+import { dirname } from 'node:path';
 import { httpServerHandler } from 'cloudflare:node';
 import express from 'express';
 import path from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const app = express();
 

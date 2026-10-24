@@ -1,39 +1,59 @@
-import { fileURLToPath } from 'node:url';
-import { dirname } from 'node:path';
-import { httpServerHandler } from 'cloudflare:node';
-import express from 'express';
-import path from 'path';
+import template from '../views/index.ejs';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const app = express();
-
-// Define your projects cleanly here so the edge worker knows what to serve
 const projects = [
     {
         folderName: '01-Stopwatch-Lap-Tracker',
         title: 'Stopwatch Lap Tracker',
-        slug: 'stopwatch-lap-tracker'
+        slug: 'stopwatch-lap-tracker',
+        path: '/stopwatch-lap-tracker'
     }
     // As you add more projects, just append them to this array!
 ];
 
-// Set view engine
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, '../views'));
+const escapeHtml = (value) =>
+    String(value ?? '').replace(/[&<>"']/g, (c) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    })[c]);
 
-// Mount static assets for each project folder natively
-projects.forEach(project => {
-    app.use(`/${project.slug}`, express.static(path.join(__dirname, `../${project.folderName}`)));
-});
+// EJS compiles templates with `new Function`, which workerd forbids, so the
+// dashboard's simple forEach/<%= %> template is rendered by hand here.
+function renderDashboard() {
+    const loop = /<%\s*projects\.forEach\([^)]*\)\s*=>\s*\{\s*%>([\s\S]*?)<%\s*\}\)\s*%>/;
+    return template.replace(loop, (_, body) =>
+        projects
+            .map((project) =>
+                body.replace(/<%=\s*([^%]+?)\s*%>/g, (__, expr) => {
+                    const prop = expr.match(/^project\.(\w+)$/);
+                    if (prop) return escapeHtml(project[prop[1]]);
+                    if (expr === "project.folderName.split('-')[0]") {
+                        return escapeHtml(project.folderName.split('-')[0]);
+                    }
+                    throw new Error(`Unsupported template expression: ${expr}`);
+                })
+            )
+            .join('')
+    );
+}
 
-// Main Dashboard Index Route
-app.get('/', (req, res) => {
-    res.render('index', { projects });
-});
-
-// Export standard Cloudflare HTTP Server handler adapter
 export default {
-  fetch: httpServerHandler(app),
+    async fetch(request, env) {
+        const url = new URL(request.url);
+
+        if (url.pathname === '/') {
+            return new Response(renderDashboard(), {
+                headers: { 'content-type': 'text/html; charset=utf-8' }
+            });
+        }
+
+        for (const project of projects) {
+            const prefix = `/${project.slug}`;
+            if (url.pathname === prefix || url.pathname.startsWith(`${prefix}/`)) {
+                const rest = url.pathname.slice(prefix.length) || '/';
+                const assetUrl = new URL(`/${project.folderName}${rest}`, url);
+                return env.ASSETS.fetch(new Request(assetUrl, request));
+            }
+        }
+
+        return new Response('Not Found', { status: 404 });
+    }
 };

@@ -18,7 +18,7 @@ const escapeHtml = (value) =>
 // EJS compiles templates with `new Function`, which workerd forbids, so the
 // dashboard's simple forEach/<%= %> template is rendered by hand here.
 function renderDashboard() {
-    const loop = /<%\s*projects\.forEach\([^)]*\)\s*=>\s*\{\s*%>([\s\S]*?)<%\s*\}\)\s*%>/;
+    const loop = /<%\s*projects\.forEach\(\s*\(?\s*\w+\s*\)?\s*=>\s*\{\s*%>([\s\S]*?)<%\s*\}\)\s*%>/;
     return template.replace(loop, (_, body) =>
         projects
             .map((project) =>

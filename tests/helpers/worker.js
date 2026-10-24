@@ -8,6 +8,7 @@ export async function startWorker() {
   const child = spawn('npx', ['wrangler', 'dev', '--local', '--port', String(PORT), '--ip', '127.0.0.1'], {
     shell: true,
     stdio: 'inherit',
+    detached: process.platform !== 'win32',
   });
 
   const deadline = Date.now() + 90_000;
@@ -29,6 +30,11 @@ export function stopWorker(child) {
   if (process.platform === 'win32') {
     spawn('taskkill', ['/pid', String(child.pid), '/T', '/F'], { stdio: 'ignore' });
   } else {
-    child.kill('SIGTERM');
+    // Kill the whole process group so wrangler/workerd don't outlive the shell.
+    try {
+      process.kill(-child.pid, 'SIGKILL');
+    } catch {
+      child.kill('SIGKILL');
+    }
   }
 }
